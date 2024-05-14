@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react"
+import { useEffect } from "react"
 
 export const Reciever = ()=>{
-    const videoRef = useRef<HTMLVideoElement>(null) ;
+    // const videoRef = useRef<HTMLVideoElement>(null) ;
     useEffect(()=>{
         const socket = new WebSocket('ws://localhost:8080') ;
         socket.onopen = ()=>{
@@ -19,6 +19,16 @@ export const Reciever = ()=>{
                         socket?.send(JSON.stringify({type:'iceCandidate' , candidate : event.candidate})) ;
                     } 
                 }
+
+                pc.ontrack = (event)=>{
+                    const video = document.createElement('video') ;
+                    document.body.appendChild(video) ;
+                    video.srcObject = new MediaStream([event.track]) ;
+                    video.muted = true ;
+                    video.play() ;
+                }
+
+
                 const answer = await pc.createAnswer() ;
                 await pc.setLocalDescription(answer) ;
                 socket.send(JSON.stringify({type:'createAnswer' , sdp : pc.localDescription})) ;
@@ -28,24 +38,13 @@ export const Reciever = ()=>{
                     pc.addIceCandidate(message.candidate) ;
                 }
             }
-            if(pc === null) return ;
-            pc.ontrack = (event)=>{
-                // console.log(track) ;
-                // const video = document.createElement('video') ;
-                // document.body.appendChild(video) ;
-                // video.srcObject = new MediaStream([event.track]) ;
-                // video.play() ;
-                if(videoRef.current){
-                    videoRef.current.srcObject = new MediaStream([event.track]) ;
-                    videoRef.current.play() ;
-                } 
-            }
+            
         }
     },[]) ;
     return <div>
-        <div className="border-black">
+        {/* <div className="border-black">
             <video autoPlay ref={videoRef} className="border-black"></video>
-        </div>
+        </div> */}
         Reciever
     </div>
 }

@@ -38,9 +38,9 @@ export const Sender = ()=>{
                 pc.addIceCandidate(message.candidate) ;
             }
         }
-            console.log("video added") ;
-            const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:false}) ;
-            pc.addTrack(stream.getVideoTracks()[0]) ;
+        console.log("video added") ;
+        const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:false}) ;
+        pc.addTrack(stream.getVideoTracks()[0]) ;
         
         
         
